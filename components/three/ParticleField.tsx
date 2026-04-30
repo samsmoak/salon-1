@@ -1,54 +1,52 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
-import { useMemo, useRef } from "react";
-import * as THREE from "three";
-
-function Particles() {
-  const ref = useRef<THREE.Points>(null);
-  const count = 60;
-  const positions = useMemo(() => {
-    const arr = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      arr[i * 3] = (Math.random() - 0.5) * 16;
-      arr[i * 3 + 1] = (Math.random() - 0.5) * 10;
-      arr[i * 3 + 2] = (Math.random() - 0.5) * 5;
-    }
-    return arr;
-  }, []);
-
-  useFrame((state) => {
-    if (!ref.current) return;
-    ref.current.rotation.y = state.clock.getElapsedTime() * 0.015;
-    ref.current.rotation.x = Math.sin(state.clock.getElapsedTime() * 0.08) * 0.05;
-  });
-
-  return (
-    <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={count}
-          array={positions}
-          itemSize={3}
-          args={[positions, 3]}
-        />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.04}
-        color="#C9A96E"
-        sizeAttenuation
-        transparent
-        opacity={0.85}
-      />
-    </points>
-  );
-}
+import { useMemo } from "react";
 
 export function ParticleField() {
+  const particles = useMemo(
+    () =>
+      Array.from({ length: 60 }, () => ({
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        size: Math.random() * 3 + 1,
+        delay: Math.random() * 8,
+        duration: Math.random() * 6 + 8,
+      })),
+    []
+  );
+
   return (
-    <Canvas camera={{ position: [0, 0, 5], fov: 60 }} gl={{ antialias: true, alpha: true }}>
-      <Particles />
-    </Canvas>
+    <div className="absolute inset-0 overflow-hidden">
+      {particles.map((p, i) => (
+        <span
+          key={i}
+          className="absolute rounded-full bg-gold animate-particle-drift"
+          style={{
+            left: `${p.left}%`,
+            top: `${p.top}%`,
+            width: `${p.size}px`,
+            height: `${p.size}px`,
+            animationDelay: `${p.delay}s`,
+            animationDuration: `${p.duration}s`,
+          }}
+        />
+      ))}
+      <style jsx>{`
+        @keyframes particle-drift {
+          0%,
+          100% {
+            transform: translate(0, 0);
+            opacity: 0.4;
+          }
+          50% {
+            transform: translate(20px, -30px);
+            opacity: 1;
+          }
+        }
+        .animate-particle-drift {
+          animation: particle-drift ease-in-out infinite;
+        }
+      `}</style>
+    </div>
   );
 }

@@ -1,36 +1,33 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
-import { useRef } from "react";
-import * as THREE from "three";
-
-function Gem() {
-  const ref = useRef<THREE.Mesh>(null);
-  useFrame((state) => {
-    if (!ref.current) return;
-    ref.current.rotation.y = state.clock.getElapsedTime() * 0.15;
-    ref.current.rotation.x = Math.sin(state.clock.getElapsedTime() * 0.3) * 0.2;
-  });
-  return (
-    <mesh ref={ref}>
-      <icosahedronGeometry args={[2.4, 1]} />
-      <meshStandardMaterial
-        color="#C9A96E"
-        roughness={0.25}
-        metalness={0.9}
-        flatShading
-      />
-    </mesh>
-  );
-}
-
 export function AbstractGem() {
   return (
-    <Canvas camera={{ position: [0, 0, 6], fov: 45 }} gl={{ antialias: true, alpha: true }}>
-      <ambientLight intensity={0.4} />
-      <directionalLight position={[3, 4, 5]} intensity={1.2} color="#EDD07A" />
-      <directionalLight position={[-3, -2, -3]} intensity={0.6} color="#9A6E30" />
-      <Gem />
-    </Canvas>
+    <div className="relative flex h-full w-full items-center justify-center">
+      <div className="gem-spin relative h-48 w-48 sm:h-64 sm:w-64">
+        <div className="gem-face absolute inset-0 rounded-[30%] bg-linear-to-br from-gold-light via-gold to-gold-deep shadow-[0_0_60px_rgba(201,169,110,0.5)]" />
+        <div className="gem-face-2 absolute inset-4 rounded-[28%] bg-linear-to-tl from-gold-deep via-gold to-gold-light opacity-80" />
+        <div className="absolute inset-10 rounded-[25%] bg-linear-to-br from-gold-light/40 to-transparent blur-md" />
+      </div>
+      <style jsx>{`
+        @keyframes gem-spin {
+          0% {
+            transform: rotateY(0deg) rotateX(0deg);
+          }
+          50% {
+            transform: rotateY(180deg) rotateX(15deg);
+          }
+          100% {
+            transform: rotateY(360deg) rotateX(0deg);
+          }
+        }
+        .gem-spin {
+          animation: gem-spin 8s ease-in-out infinite;
+          transform-style: preserve-3d;
+        }
+        .gem-face-2 {
+          animation: gem-spin 8s ease-in-out infinite reverse;
+        }
+      `}</style>
+    </div>
   );
 }
