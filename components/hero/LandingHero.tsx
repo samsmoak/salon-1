@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { HERO_SLIDES, HOURS_PILL, STUDIO } from "@/lib/constants";
 
-const SLIDE_DURATION = 6000;
+const SLIDE_DURATION = 4500;
 
 export function LandingHero() {
   const [active, setActive] = useState(0);
